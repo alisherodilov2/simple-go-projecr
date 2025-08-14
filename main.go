@@ -9,10 +9,16 @@ import (
 )
 
 func main() {
-	godotenv.Load()
+	enverr := godotenv.Load()
+	if enverr != nil {
+		return
+	}
 
 	database.Connect()
-	database.DB.AutoMigrate(&models.Book{})
+	err := database.DB.AutoMigrate(&models.Book{})
+	if err != nil {
+		return
+	}
 
 	r := gin.Default()
 	routes.SetupRoutes(r)
