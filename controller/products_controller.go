@@ -24,7 +24,10 @@ func GetBook(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
 		return
 	}
-	c.JSON(http.StatusOK, book)
+	
+	c.JSON(http.StatusOK, gin.H{
+		"data": resource.BookMake(book),
+	})
 }
 
 func CreateBook(c *gin.Context) {

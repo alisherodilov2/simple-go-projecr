@@ -21,3 +21,12 @@ func BookCollection(books []models.Book) []BookResource {
 	}
 	return resources
 }
+
+func BookMake(book models.Book) BookResource {
+	return BookResource{
+		ID:          book.ID,
+		Title:       book.Title,
+		Author:      book.Author,
+		Description: book.Description,
+	}
+}
