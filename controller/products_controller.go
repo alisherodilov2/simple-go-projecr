@@ -24,7 +24,7 @@ func GetBook(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"data": resource.BookMake(book),
 	})
@@ -37,7 +37,9 @@ func CreateBook(c *gin.Context) {
 		return
 	}
 	database.DB.Create(&book)
-	c.JSON(http.StatusCreated, book)
+	c.JSON(http.StatusCreated, gin.H{
+		"data": resource.BookMake(book),
+	})
 }
 
 func UpdateBook(c *gin.Context) {
@@ -58,7 +60,9 @@ func UpdateBook(c *gin.Context) {
 	book.Author = input.Author
 	database.DB.Save(&book)
 
-	c.JSON(http.StatusOK, book)
+	c.JSON(http.StatusOK, gin.H{
+		"data": resource.BookMake(book),
+	})
 }
 
 func DeleteBook(c *gin.Context) {
