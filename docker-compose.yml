@@ -18,6 +18,9 @@ services:
     container_name: go_api_app
     ports:
       - "8080:8080"
+    volumes:
+      - .:/app     
+      - /app/bin
     environment:
       DB_HOST: db
       DB_PORT: 5432
@@ -26,6 +29,5 @@ services:
       DB_NAME: go_api_db
     depends_on:
       - db
-
 volumes:
   db_data:

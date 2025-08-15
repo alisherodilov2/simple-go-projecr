@@ -1,13 +1,12 @@
 #!/bin/sh
-set -e
-
 host="$1"
 shift
 cmd="$@"
 
-until pg_isready -h "$host" -U "$DB_USER"; do
-  echo "Waiting for postgres at $host..."
+# Wait until Postgres port is open
+while ! nc -z "$host" 5432; do
+  echo "Waiting for Postgres at $host..."
   sleep 2
 done
 
-exec $cmd
+exec "$@"
