@@ -25,3 +25,13 @@ func ProductCollection(products []models.Products) []ProductResponse {
 	}
 	return resources
 }
+
+func ProductMake(product models.Products) ProductResponse {
+	return ProductResponse{
+		ID:          product.ID,
+		Title:       product.Title,
+		Description: product.Description,
+		Image:       product.Image,
+		Comments:    CommentCollection(product.Comments),
+	}
+}

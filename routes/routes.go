@@ -18,5 +18,11 @@ func SetupRoutes(engine *gin.Engine) {
 	productsRouter := engine.Group("/products")
 	{
 		productsRouter.GET("/", controllers.GetProducts)
+		productsRouter.GET("/:id", controllers.GetProduct)
+	}
+
+	authRouter := engine.Group("/auth")
+	{
+		authRouter.POST("/register", controllers.Register)
 	}
 }

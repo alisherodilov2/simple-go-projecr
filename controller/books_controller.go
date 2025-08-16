@@ -20,6 +20,7 @@ func GetBooks(c *gin.Context) {
 func GetBook(c *gin.Context) {
 	id := c.Param("id")
 	var book models.Book
+
 	if err := database.DB.First(&book, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
 		return
