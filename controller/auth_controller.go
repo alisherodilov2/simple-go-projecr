@@ -56,7 +56,7 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Login successful",
 		"token":   tokenString,
-		"user":    resource.UserMake(*user), // don’t expose password
+		"user":    resource.UserMake(*user),
 	})
 }
 func GetUser(c *gin.Context) {
