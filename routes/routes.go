@@ -14,4 +14,9 @@ func SetupRoutes(engine *gin.Engine) {
 		bookRouter.POST("/", controllers.CreateBook)
 		bookRouter.POST("/:id", controllers.UpdateBook)
 	}
+
+	productsRouter := engine.Group("/products")
+	{
+		productsRouter.GET("/", controllers.GetProducts)
+	}
 }

@@ -16,6 +16,17 @@ func main() {
 
 	database.Connect()
 	err := database.DB.AutoMigrate(&models.Book{})
+	products := database.DB.AutoMigrate(&models.Products{})
+	commment := database.DB.AutoMigrate(&models.Comments{})
+
+	if products != nil {
+		return
+	}
+
+	if commment != nil {
+		return
+	}
+
 	if err != nil {
 		return
 	}
