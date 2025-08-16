@@ -12,7 +12,7 @@ var JwtKey = []byte("your_secret_key")
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Get token from Authorization header
+
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header required"})
@@ -20,7 +20,6 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// Header format: "Bearer <token>"
 		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Authorization header"})
@@ -30,7 +29,6 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		tokenStr := parts[1]
 
-		// Parse token
 		token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, jwt.ErrHashUnavailable
@@ -44,7 +42,6 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// Token is valid, proceed
 		c.Next()
 	}
 }
