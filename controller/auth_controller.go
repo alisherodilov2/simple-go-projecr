@@ -74,7 +74,6 @@ func GetUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"id":       user.ID,
-		"username": user.Username,
+		"data": resource.UserMake(user),
 	})
 }
