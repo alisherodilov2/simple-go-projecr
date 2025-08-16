@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/alisherodilov2/go-first/controller"
+	"github.com/alisherodilov2/go-first/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,6 +26,6 @@ func SetupRoutes(engine *gin.Engine) {
 	{
 		authRouter.POST("/register", controllers.Register)
 		authRouter.POST("/login", controllers.Login)
-		authRouter.GET("/me", controllers.GetUser)
+		authRouter.GET("/me", middleware.AuthMiddleware(), controllers.GetUser)
 	}
 }

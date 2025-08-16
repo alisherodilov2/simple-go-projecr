@@ -49,7 +49,6 @@ func (s *AuthService) Login(username, password string) (string, *models.User, er
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	
 	tokenString, err := token.SignedString(config.JwtKey)
 	if err != nil {
 		return "", nil, fmt.Errorf("failed to generate token")

@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	"github.com/alisherodilov2/go-first/models"
 	"github.com/alisherodilov2/go-first/resource"
 	"github.com/alisherodilov2/go-first/services"
 	"github.com/gin-gonic/gin"
@@ -37,20 +38,43 @@ func Login(c *gin.Context) {
 	}
 
 	tokenString, user, loginErr := authService.Login(request.Username, request.Password)
-
 	if loginErr != nil {
-		c.JSON(http.StatusNoContent, gin.H{"error": loginErr.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": loginErr.Error()})
+		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": tokenString, "user": resource.UserMake(*user)})
-}
+	c.SetCookie(
+		"auth_token",
+		tokenString,
+		3600*24*3,
+		"/",
+		"",
+		false,
+		true,
+	)
 
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Login successful",
+		"token":   tokenString,
+		"user":    resource.UserMake(*user), // don’t expose password
+	})
+}
 func GetUser(c *gin.Context) {
-	user, exists := c.Get("user")
+
+	u, exists := c.Get("user")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"user": user})
+	user, ok := u.(models.User)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user data"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"id":       user.ID,
+		"username": user.Username,
+	})
 }
