@@ -4,15 +4,13 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/alisherodilov2/go-first/config"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var JwtKey = []byte("your_secret_key")
-
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header required"})
@@ -28,12 +26,8 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		tokenStr := parts[1]
-
 		token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, jwt.ErrHashUnavailable
-			}
-			return JwtKey, nil
+			return config.JwtKey, nil
 		})
 
 		if err != nil || !token.Valid {
@@ -41,6 +35,11 @@ func AuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
+		claims := token.Claims.(jwt.MapClaims)
+		userID := uint(claims["user_id"].(float64))
+
+		c.Set("user_id", userID)
 
 		c.Next()
 	}
