@@ -4,6 +4,7 @@
     <inspection_tool class="GoDfaErrorMayBeNotNil" enabled="true" level="WARNING" enabled_by_default="true">
       <methods>
         <method importPath="github.com/alisherodilov2/go-first/services" receiver="*AuthService" name="Register" />
+        <method importPath="github.com/alisherodilov2/go-first/services" receiver="*AuthService" name="Login" />
       </methods>
     </inspection_tool>
   </profile>
