@@ -2,22 +2,30 @@ package middleware
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/alisherodilov2/go-first/config"
-	"github.com/alisherodilov2/go-first/database"
-	"github.com/alisherodilov2/go-first/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		tokenStr, err := c.Cookie("auth_token")
-		if err != nil || tokenStr == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Missing Authorization header"})
 			c.Abort()
 			return
 		}
+
+		parts := strings.Split(authHeader, " ")
+		if len(parts) != 2 || parts[0] != "Bearer" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Authorization header"})
+			c.Abort()
+			return
+		}
+
+		tokenStr := parts[1]
 
 		token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -39,17 +47,14 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		userID := uint(claims["user_id"].(float64))
-
-		var user models.User
-		if err := database.DB.First(&user, userID).Error; err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+		userIDFloat, ok := claims["user_id"].(float64)
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid claims"})
 			c.Abort()
 			return
 		}
 
-		// Put user in context
-		c.Set("user", user)
+		c.Set("user_id", uint(userIDFloat))
 		c.Next()
 	}
 }

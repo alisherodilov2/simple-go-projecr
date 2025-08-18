@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	"github.com/alisherodilov2/go-first/database"
 	"github.com/alisherodilov2/go-first/models"
 	"github.com/alisherodilov2/go-first/resource"
 	"github.com/alisherodilov2/go-first/services"
@@ -61,18 +62,24 @@ func Login(c *gin.Context) {
 }
 func GetUser(c *gin.Context) {
 
-	u, exists := c.Get("user")
+	userIDVal, exists := c.Get("user_id")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
 
-	user, ok := u.(models.User)
+	userID, ok := userIDVal.(uint)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user data"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID"})
 		return
 	}
 
+	var user models.User
+	if err := database.DB.First(&user, userID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+	
 	c.JSON(http.StatusOK, gin.H{
 		"data": resource.UserMake(user),
 	})
