@@ -16,7 +16,7 @@ func SetupRoutes(engine *gin.Engine) {
 		bookRouter.POST("/:id", controllers.UpdateBook)
 	}
 
-	productsRouter := engine.Group("/products")
+	productsRouter := engine.Group("/products").Use(middleware.AuthMiddleware())
 	{
 		productsRouter.GET("/", controllers.GetProducts)
 		productsRouter.GET("/:id", controllers.GetProduct)
